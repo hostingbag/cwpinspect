@@ -263,7 +263,8 @@ else
 fi
 
 section "Validation"
-grep -R "$BAD_SSH_KEY" /root /home -n 2>/dev/null | grep authorized_keys > "$BK/logs/remaining_bad_ssh_key.txt" || true
+find /root /home -path '*/.ssh/authorized_keys' -type f -exec grep -Hn "$BAD_SSH_KEY" {} \; \
+  > "$BK/logs/remaining_bad_ssh_key.txt" 2>/dev/null || true
 find /usr/bin /home/*/.config/htop -type f -name 'defunct' -exec sha256sum {} \; 2>/dev/null | grep "$BAD_HASH" > "$BK/logs/remaining_bad_hash.txt" || true
 find /home -path '*/uploads/*' -type f \( -name '*.php' -o -name '*.phtml' -o -name '*.php[0-9]' \) ! -name 'index.php' -print 2>/dev/null > "$BK/logs/remaining_upload_php_nonindex.txt"
 xargs -r grep -Il 'eval(base64_decode("aW5pX3NldC' < "$BK/logs/php_files.txt" 2>/dev/null > "$BK/logs/remaining_exact_web_injection.txt" || true
