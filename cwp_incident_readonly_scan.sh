@@ -79,7 +79,9 @@ section "SSH Authorized Keys"
 find /root /home -path '*/.ssh/authorized_keys' -type f -print 2>/dev/null > "$OUT/auth/authorized_key_files.txt"
 while IFS= read -r f; do
   stat -c '%U:%G %a %n' "$f" 2>/dev/null
-  grep -n "$BAD_SSH_KEY" "$f" 2>/dev/null | sed "s#^#$f:#"
+done < "$OUT/auth/authorized_key_files.txt" > "$OUT/auth/authorized_key_stats.txt"
+while IFS= read -r f; do
+  grep -Hn "$BAD_SSH_KEY" "$f" 2>/dev/null
 done < "$OUT/auth/authorized_key_files.txt" > "$OUT/auth/bad_ssh_key_hits.txt"
 count_file "known_bad_ssh_key_hits" "$OUT/auth/bad_ssh_key_hits.txt"
 
