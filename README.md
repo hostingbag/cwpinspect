@@ -57,6 +57,21 @@ Cleanup backups and logs are written to:
 /root/incident-cleanup-YYYYmmddHHMMSS/
 ```
 
-The cleanup script backs up every touched file before removal or edit. It removes only known indicators such as malicious SSH keys, malicious sudoers drop-ins, defunct cron/process/files, known CWP webshell artifacts, exact PHP injection lines, and optionally upload PHP/PHTML files.
+The cleanup script backs up only the individual regular files it is going to edit or remove. It does not back up the full `/home` directory or full website directories.
+
+Backup paths preserve the original path under `backups/`. Example:
+
+```text
+Original: /home/user/public_html/wp-content/uploads/a/shell.php
+Backup:   /root/incident-cleanup-YYYYmmddHHMMSS/backups/home/user/public_html/wp-content/uploads/a/shell.php
+```
+
+A restore map is also written here:
+
+```text
+/root/incident-cleanup-YYYYmmddHHMMSS/logs/backup-map.tsv
+```
+
+The cleanup script removes only known indicators such as malicious SSH keys, malicious sudoers drop-ins, defunct cron/process/files, known CWP webshell artifacts, exact PHP injection lines, and optionally upload PHP/PHTML files.
 
 It does not automatically harden SSH or restrict CWP ports because that can lock out administrators unless an alternate sudo user and allow-listed IPs are tested first.

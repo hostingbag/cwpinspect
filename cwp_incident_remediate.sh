@@ -71,11 +71,16 @@ doit() {
 backup_file() {
   f="$1"
   [ -e "$f" ] || return 0
+  if [ ! -f "$f" ]; then
+    log "SKIP_BACKUP_NOT_REGULAR_FILE: $f"
+    return 0
+  fi
   rel="${f#/}"
   dest="$BK/backups/$rel"
   mkdir -p "$(dirname "$dest")"
   if [ ! -e "$dest" ]; then
-    cp -a "$f" "$dest"
+    cp -p "$f" "$dest"
+    printf '%s\t%s\n' "$f" "$dest" >> "$BK/logs/backup-map.tsv"
     log "BACKUP: $f -> $dest"
   fi
 }
